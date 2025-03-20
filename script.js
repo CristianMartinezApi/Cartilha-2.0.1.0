@@ -1,36 +1,65 @@
-// filepath: c:\Users\ferna\OneDrive\Área de Trabalho\Cartilha-2.01.0\cartilha-2.0.1.0\js\script.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Mapeamento do toggle para tema claro/escuro
+    // Theme Toggle
     const toggleSwitch = document.querySelector('.toggle-switch input[type="checkbox"]');
-    toggleSwitch.addEventListener('change', () => {
-        document.body.classList.toggle('dark-theme', toggleSwitch.checked);
-    });
-    
-    // Mapeamento do botão e do container de boas práticas
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', () => {
+            document.body.classList.toggle('dark-theme', toggleSwitch.checked);
+        });
+    } else {
+        console.error('Toggle switch not found.');
+    }
+
+    // Boas Práticas Expansion
     const toggleBoasButton = document.getElementById('toggle-boas-praticas');
     const boasContent = document.querySelector('.boas-content');
-    
+
     if (toggleBoasButton && boasContent) {
         toggleBoasButton.addEventListener('click', () => {
             boasContent.classList.toggle('expanded');
-            if (boasContent.classList.contains('expanded')) {
-                toggleBoasButton.textContent = 'Recolher';
-            } else {
-                toggleBoasButton.textContent = 'Expandir';
-            }
+            const expanded = boasContent.classList.contains('expanded');
+            toggleBoasButton.textContent = expanded ? 'Recolher' : 'Expandir';
+            toggleBoasButton.setAttribute('aria-expanded', expanded); // Accessibility
         });
+        toggleBoasButton.setAttribute('aria-expanded', boasContent.classList.contains('expanded') ? 'true' : 'false');
+    } else {
+        console.error('Toggle boas práticas button or content not found.');
     }
-    
-    // Fixar a navbar ao rolar o scroll após o header desaparecer
+
+    // Fixed Navbar
     const navbar = document.querySelector('.navbar');
     const header = document.querySelector('.site-header');
-    
-    window.addEventListener('scroll', () => {
-        const headerHeight = header.offsetHeight;
-        if (window.pageYOffset >= headerHeight) {
-            navbar.classList.add('fixed-navbar');
-        } else {
-            navbar.classList.remove('fixed-navbar');
-        }
+
+    if (navbar && header) {
+        window.addEventListener('scroll', () => {
+            const headerHeight = header.offsetHeight;
+            if (window.pageYOffset >= headerHeight) {
+                navbar.classList.add('fixed-navbar');
+            } else {
+                navbar.classList.remove('fixed-navbar');
+            }
+        });
+    } else {
+        console.error('Navbar or header not found.');
+    }
+
+    // Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                const navbar = document.querySelector('.navbar');
+                const navbarHeight = navbar ? navbar.offsetHeight : 0; // Handle case where navbar is null
+                const targetOffset = targetElement.offsetTop - navbarHeight;
+
+                window.scrollTo({
+                    top: targetOffset,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
 });
